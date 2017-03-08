@@ -13,24 +13,9 @@ public class DictUnionNotPermittedException extends RuntimeException {
 	
 	private static final String message = "The attempted union of the two rows failed.";
 
-	public DictUnionNotPermittedException() {
-		super(message);
-	}
 
 	public DictUnionNotPermittedException(String arg0) {
 		super(message + " " + arg0);
-	}
-
-	public DictUnionNotPermittedException(Throwable arg0) {
-		super(message, arg0);
-	}
-
-	public DictUnionNotPermittedException(String arg0, Throwable arg1) {
-		super(message + " " + arg0, arg1);
-	}
-
-	public DictUnionNotPermittedException(String arg0, Throwable arg1, boolean arg2, boolean arg3) {
-		super(message + " " + arg0, arg1, arg2, arg3);
 	}
 
 }
