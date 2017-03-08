@@ -52,6 +52,7 @@ public class KdbTable implements Iterable<KdbDict> {
 	
 	private Integer rowCount;
 
+	
 	/**
 	 * Instantiate an empty table structure
 	 * @param tableName The name of the table to create
