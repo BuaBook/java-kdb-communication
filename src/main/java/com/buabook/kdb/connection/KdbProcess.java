@@ -21,7 +21,7 @@ public class KdbProcess extends Process {
 		this(hostname, port, null, null);
 	}
 	
-	public KdbProcess(String hostname, String portStr) {
+	public KdbProcess(String hostname, String portStr) throws NumberFormatException {
 		this(hostname, portStr, null, null);
 	}
 	
@@ -32,7 +32,7 @@ public class KdbProcess extends Process {
 		this.password = password;
 	}
 	
-	public KdbProcess(String hostname, String portStr, String username, String password) {
+	public KdbProcess(String hostname, String portStr, String username, String password) throws NumberFormatException {
 		super(hostname, portStr);
 		
 		this.username = username;
@@ -51,18 +51,12 @@ public class KdbProcess extends Process {
 	@Override
 	public String toString() {
 		String userAndPass = getUserAndPassword();
-		
-		if(! Strings.isNullOrEmpty(userAndPass))
-			userAndPass = " (User/Pass : " + userAndPass + ")";	
-		
-		return "(kdb) " + getHostname() + ":" + getPort() + userAndPass;
-	}
-	
-	/**
-	 * @return The server definition as a kdb connection string (i.e. host:port)
-	 */
-	public String getAsKdbConnection() {
-		return getHostname() + ":" + getPort();
+
+		return new StringBuilder()
+							.append("(kdb) ")
+							.append(super.toString())
+							.append((Strings.isNullOrEmpty(userAndPass) ? "" : " (User/Pass: " + userAndPass + ")"))
+							.toString();
 	}
 	
 	/**
