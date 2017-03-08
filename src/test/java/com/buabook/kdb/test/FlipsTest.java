@@ -109,4 +109,11 @@ public class FlipsTest {
 		
 		return new Flip(new Dict(keys, cols));
 	}
+	
+	// Constructor
+	
+	@Test
+	public void testConstructorConstructsWithoutError() {
+		new Flips();
+	}
 }

@@ -80,4 +80,11 @@ public class DictsTest {
 		
 		assertThat(Dicts.getSize(dict), is(equalTo(3)));
 	}
+	
+	// Constructor
+	
+	@Test
+	public void testConstructorConstructsWithoutError() {
+		new Dicts();
+	}
 }

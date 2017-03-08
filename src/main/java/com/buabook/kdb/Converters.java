@@ -24,11 +24,14 @@ public final class Converters {
 	
 	/** @return kdb {@link Timespan} equivalent to XML duration */
 	public static Timespan durationToTimespan(Duration xmlDuration) {
+		if(xmlDuration == null)
+			return new Timespan(0l);
+		
 		return new Timespan(NANO_SECONDS_IN_1_MS * xmlDuration.getTimeInMillis(DateTime.now().toDate()));
 	}
 	
 	/** Convert a long date (milliseconds after 1970) to a {@link Date} object. This represents a date-only object in kdb */
-	public static Date longToSqlDate(Long dateTime){
+	public static Date longToSqlDate(long dateTime){
 		return new Date(dateTime);
 	}
 	

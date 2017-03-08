@@ -7,8 +7,22 @@ import static org.hamcrest.Matchers.is;
 import org.junit.Test;
 
 import com.buabook.kdb.data.PrintableDict;
+import com.kx.c.Dict;
 
 public class PrintableDictTest {
+	
+	// PrintableDict(Dict)
+	
+	@Test
+	public void testConstructorWithDictConvertsSuccessfully() {
+		Object[] keys = { 1, 2, 3 };
+		Object[] vals = { 4, 5, 6 };
+		
+		Dict dict = new Dict(keys, vals);
+		PrintableDict pDict = new PrintableDict(dict);
+		
+		assertThat(pDict.getSize(), is(equalTo(3)));
+	}
 	
 	// PrintableDict.toString
 
@@ -60,4 +74,5 @@ public class PrintableDictTest {
 		
 		assertThat(dict.getSize(), is(equalTo(3)));
 	}
+	
 }
