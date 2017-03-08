@@ -26,6 +26,43 @@ import com.kx.c.Dict;
  */
 public class KdbDictTest {
 	
+	// KdbDict.setInitialDataSet
+	
+	@Test(expected=DataOverwriteNotPermittedException.class)
+	public void testSetInitialDataSetThrowsExceptionIfKdbDictIsNotEmpty() {
+		KdbDict dict = new KdbDict()
+								.add("key1", 12345);
+		
+		dict.setInitialDataSet(null);
+	}
+	
+	@Test(expected=UnsupportedOperationException.class)
+	public void testSetInitialDataSetThrowsExceptionIfKeyNotObjectOrPrimitiveArrayType() {
+		String badKey = "abc";
+		Object[] vals = { 1, 2, 3 };
+		
+		new KdbDict()
+					.setInitialDataSet(new Dict(badKey, vals));
+	}
+	
+	@Test(expected=UnsupportedOperationException.class)
+	public void testSetInitialDataSetThrowsExceptionIfValNotObjectOrPrimitiveArrayType() {
+		Object[] keys = { "a", "b", "c" };
+		String badVal = "def";
+		
+		new KdbDict()
+					.setInitialDataSet(new Dict(keys, badVal));
+	}
+	
+	@Test(expected=UnsupportedOperationException.class)
+	public void testSetInitialDataSetThrowsExceptionIfInputDictKeyAndValueLengthsDoNotAlign() {
+		Object[] keys = { "a", "b" };
+		Object[] vals = { 1, 2, 3, 4 };
+		
+		new KdbDict()
+					.setInitialDataSet(new Dict(keys, vals));
+	}
+	
 	// KdbDict.add
 
 	@Test(expected=IllegalArgumentException.class)
