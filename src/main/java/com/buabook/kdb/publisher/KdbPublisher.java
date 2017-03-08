@@ -35,6 +35,8 @@ public class KdbPublisher extends KdbConnection {
 	/** @see #resetConnectionDuration */ 
 	private static final Duration DEFAULT_RESET_CONNECTION_DURATION = Duration.standardMinutes(30);
 	
+	private static final String PUBLISH_FUNCTION = ".u.upd";
+	
 
 	/**
 	 * <p>The maximum amount of time after the last publish / connect allowed before the connection to the kdb
@@ -133,7 +135,7 @@ public class KdbPublisher extends KdbConnection {
 		log.debug("Publishing table update [ Table Name: {} ] [ Table Size: {} ]", tableName, Flips.getRowCount(tableData));
 		
 		try {
-			getConnection().ks(".u.upd", tableName, tableData);
+			getConnection().ks(PUBLISH_FUNCTION, tableName, tableData);
 		} catch (RuntimeException e) { 
 			log.error("Uncaught RuntimeException during publishing. Error - {}", e.getMessage(), e);
 			return false;
