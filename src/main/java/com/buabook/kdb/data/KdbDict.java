@@ -187,9 +187,6 @@ public class KdbDict {
 	}
 	
 	public Boolean isEmpty() {
-		if(data == null)
-			return true;
-		
 		return data.isEmpty();
 	}
 	
