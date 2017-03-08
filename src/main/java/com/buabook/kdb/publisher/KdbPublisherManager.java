@@ -17,7 +17,7 @@ import com.buabook.kdb.exceptions.KdbTargetProcessUnavailableException;
  * <h3>KDB Publisher Manager</h3>
  * <p>Provides the ability to maintain numerous kdb publishers and interface with them 
  * all through a single method call, within this class.</p>
- * <p>Use cases include PROD & DR dual-publishing</p>
+ * <p>Use cases include PROD &amp; DR dual-publishing</p>
  * (c) 2014 - 2017 Sport Trades Ltd
  *
  * @author Jas Rajasansir

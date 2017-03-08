@@ -10,7 +10,7 @@ import org.joda.time.DateTime;
 import com.kx.c.Timespan;
 
 /**
- * <h3>Conversion Methods for Java &lt;&dash;&gt; kdb Communication</h3>
+ * <h3>Conversion Methods for Java &lt;-&gt; kdb Communication</h3>
  * (c) 2017 Sport Trades Ltd
  * 
  * @author Jas Rajasansir

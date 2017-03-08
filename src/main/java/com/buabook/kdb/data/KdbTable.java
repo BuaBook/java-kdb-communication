@@ -142,7 +142,7 @@ public class KdbTable implements Iterable<KdbDict> {
 		data.remove(columnName);
 	}
 	
-	/** @see #addRow(HashMap) */
+	/** @see #addRow(Map) */
 	public void addRow(KdbDict row) throws TableSchemaMismatchException {
 		addRow(row.getDataStoreWithStringKeys());
 	}
@@ -277,11 +277,11 @@ public class KdbTable implements Iterable<KdbDict> {
 	}
 	
 	/**
-	 * Accepts a list of {@link KdbRow} objects and generates a new {@link KdbTable} from it
+	 * Accepts a list of {@link KdbDict} objects and generates a new {@link KdbTable} from it
 	 * @param name The name of the new table
 	 * @param rows The list of rows to generate the table from
 	 * @return The new table
-	 * @see #addRow(KdbRow)
+	 * @see #addRow(KdbDict)
 	 */
 	public static KdbTable buildFromRowList(String name, List<KdbDict> rows) {
 		KdbTable table = new KdbTable(name);

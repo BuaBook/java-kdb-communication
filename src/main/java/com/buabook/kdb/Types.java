@@ -15,7 +15,7 @@ import com.kx.c.Second;
 import com.kx.c.Timespan;
 
 /**
- * <h3>Java &lt;&dash;&gt; kdb Type Conversions</h3>
+ * <h3>Java &lt;-&gt; kdb Type Conversions</h3>
  * (c) 2017 Sport Trades Ltd
  * 
  * @author Jas Rajasansir

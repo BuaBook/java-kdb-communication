@@ -52,7 +52,7 @@ public class KdbConsumerThread extends Thread {
 	 * for no listener
 	 * 
 	 * @throws KdbTargetProcessUnavailableException
-	 * @see KdbConsumer#KdbConsumer(KdbProcess, List, List, IKdbRawDataConsumer, IKdbTableConsumer)
+	 * @see KdbConsumer#KdbConsumer(KdbProcess, List, IKdbRawDataConsumer, IKdbTableConsumer)
 	 */
 	public KdbConsumerThread(KdbProcess server, List<String> tables, IKdbRawDataConsumer rawDataConsumer, IKdbTableConsumer tableConsumer, IKdbConsumerFailedListener failureListener) throws KdbTargetProcessUnavailableException {
 

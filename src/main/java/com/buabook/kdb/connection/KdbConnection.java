@@ -28,11 +28,13 @@ public class KdbConnection implements AutoCloseable {
 	/** The default reconnection interval in milliseconds */
 	private static final Integer DEFAULT_RECONNECT_INTERVAL_MS = 2000;
 	
+	
 	/** The amount of time in milliseconds to wait between connection attempts */
 	protected final Integer reconnectIntervalMs; 
 	
 	/** The details of the process to connect to */
 	private final KdbProcess process;
+	
 	
 	/** The current active connection to the kdb process */
 	private c connection;
