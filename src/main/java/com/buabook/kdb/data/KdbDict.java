@@ -151,6 +151,10 @@ public class KdbDict {
 		return data;
 	}
 	
+	/** 
+	 * Useful when the dictionary is from a table row as the keys will always be strings in this case.
+	 * @return The store will all keys converted to strings (with {@link Objects#toString(Object)})
+	 */
 	public Map<String, Object> getDataStoreWithStringKeys() {
 		return data.entrySet().stream()
 									.collect(Collectors.toMap(	e -> Objects.toString(e.getKey()), 
