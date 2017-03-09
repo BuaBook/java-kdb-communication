@@ -112,8 +112,9 @@ public class KdbTable implements Iterable<KdbDict> {
 		for(int cCount = 0; cCount < initalData.x.length; cCount++) {
 			String colName = initalData.x[cCount];
 			Object[] colData = Converters.arrayToObjectArray(initalData.y[cCount]);
+			List<Object> objArray = new ArrayList<>(Arrays.asList(colData));
 			
-			data.put(colName, Arrays.asList(colData));
+			data.put(colName, objArray);
 		}
 		
 		this.rowCount = Converters.arrayToObjectArray(initalData.y[0]).length;
@@ -145,6 +146,9 @@ public class KdbTable implements Iterable<KdbDict> {
 	
 	/** @see #addRow(Map) */
 	public void addRow(KdbDict row) throws TableSchemaMismatchException {
+		if(row == null)
+			return;
+		
 		addRow(row.getDataStoreWithStringKeys());
 	}
 	
@@ -154,7 +158,7 @@ public class KdbTable implements Iterable<KdbDict> {
 	 * @throws TableSchemaMismatchException If there are any missing columns from the new row
 	 */
 	public void addRow(Map<String, Object> row) throws TableSchemaMismatchException {
-		if(row == null)
+		if(row == null || row.isEmpty())
 			return; 
 		
 		if(! isEmpty())
@@ -178,16 +182,16 @@ public class KdbTable implements Iterable<KdbDict> {
 		this.rowCount++;
 	}
 	
-	/**@throws TableSchemaMismatchException If the two table names or table schemas do not match */
+	/**
+	 * Appends the specified table onto the current table (similar to the kdb+ <code>uj</code> function) 
+	 * @throws TableSchemaMismatchException If the two table names or table schemas do not match
+	 */
 	public void append(KdbTable that) throws TableSchemaMismatchException {
-		if(that == null)
+		if(that == null || that.isEmpty())
 			return;
 		
 		if(! this.tableName.equals(that.tableName))
 			throw new TableSchemaMismatchException("Table names are different");
-		
-		if(that.isEmpty())
-			return;
 		
 		if(! isEmpty())
 			if(! that.getTableData().keySet().containsAll(data.keySet()))
@@ -213,7 +217,8 @@ public class KdbTable implements Iterable<KdbDict> {
 	
 	/**
 	 * Converts the nice Java representation of a kdb table into the actual format ready for sending across
-	 * the wire to a kdb process.
+	 * the wire to a kdb process. <b>NOTE</b>: The columns of the generated table will <i>always</i> be in 
+	 * alphabetical order.
 	 * @return The object that can be sent to a kdb process
 	 */
 	public Flip convertToFlip() {
@@ -239,7 +244,7 @@ public class KdbTable implements Iterable<KdbDict> {
 	}
 	
 	public Boolean isEmpty() {
-		return data == null || rowCount == 0 || data.isEmpty();
+		return rowCount == 0 || data.isEmpty();
 	}
 	
 	/**

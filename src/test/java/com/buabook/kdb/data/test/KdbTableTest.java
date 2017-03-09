@@ -1,17 +1,17 @@
 package com.buabook.kdb.data.test;
 
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.hasKey;
-import static org.hamcrest.Matchers.is;
-import static org.hamcrest.Matchers.not;
-import static org.hamcrest.Matchers.nullValue;
+import static org.hamcrest.Matchers.*;
 import static org.junit.Assert.assertThat;
+import static org.hamcrest.CoreMatchers.instanceOf;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Test;
 
+import com.buabook.kdb.data.KdbDict;
 import com.buabook.kdb.data.KdbTable;
 import com.buabook.kdb.exceptions.DataOverwriteNotPermittedException;
 import com.buabook.kdb.exceptions.TableColumnAlreadyExistsException;
@@ -140,6 +140,186 @@ public class KdbTableTest {
 		assertThat(table.getTableData(), not(hasKey("key1")));
 	}
 	
+	// KdbTable.addRow(KdbDict)
+	
+	@Test
+	public void testAddRowKdbDictIgnoresNullRow() {
+		KdbTable table = new KdbTable("my-test-table");
+		table.addRow((KdbDict) null);
+		
+		assertThat(table.isEmpty(), is(equalTo(true)));
+	}
+	
+	@Test
+	public void testAddRowKdbDictAddsRow() {
+		KdbTable table = new KdbTable("my-test-table");
+		table.addRow(new KdbDict().add("col1", "val1"));
+		
+		assertThat(table.getTableData(), hasKey("col1"));
+	}
+	
+	// KdbTable.addRow(Map)
+	
+	@Test
+	public void testAddRowMapIgnoresNullAndEmptyMaps() {
+		KdbTable table = new KdbTable("my-test-table");
+		table.addRow((Map<String, Object>) null);
+		table.addRow(new HashMap<>());
+		
+		assertThat(table.isEmpty(), is(equalTo(true)));
+	}
+	
+	@Test(expected=TableSchemaMismatchException.class)
+	public void testAddRowMapThrowsExceptionIfRowMissingColumn() {
+		KdbTable table = new KdbTable("my-test-table", getTable());
+		KdbDict newRow = new KdbDict()
+									.add("key1", 1.3)
+									.add("key2", 10);
+		
+		table.addRow(newRow);
+	}
+	
+	@Test
+	public void testAddRowMapAddsNewRow() {
+		KdbTable table = new KdbTable("my-test-table", getTable());
+		KdbDict newRow = new KdbDict()
+									.add("key1", 1.3)
+									.add("key2", 10)
+									.add("key3", "a");
+		
+		table.addRow(newRow);
+		
+		assertThat(table.getRowCount(), is(equalTo(4)));
+		assertThat(table.getRow(3), is(equalTo(newRow)));
+	}
+	
+	@Test
+	public void testAddRowMapAddsConvertsListAndEnumTypesCorrectly() {
+		KdbTable table = new KdbTable("my-test-table");
+		KdbDict newRow = new KdbDict()
+									.add("nested-list", ImmutableList.of(1, 2, 3))
+									.add("enum", TestEnum.VALUE_1);
+		
+		table.addRow(newRow);
+		
+		KdbDict addedRow = table.getRow(0);
+		
+		assertThat(addedRow.get("nested-list"), is(instanceOf(Object[].class)));
+		assertThat(addedRow.get("enum"), is(equalTo("VALUE_1")));
+	}
+	
+	// KdbTable.append
+	
+	@Test
+	public void testAppendIgnoresNullOrEmptyTableToAdd() {
+		KdbTable table = new KdbTable("my-test-table");
+		table.append(null);
+		table.append(new KdbTable("my-test-table"));;
+		
+		assertThat(table.isEmpty(), is(equalTo(true)));
+	}
+	
+	@Test(expected=TableSchemaMismatchException.class)
+	public void testAppendThrowsExceptionIfTableNameOfNonEmptyTableMismatches() {
+		KdbTable table = new KdbTable("my-test-table");
+		KdbTable toAppend = new KdbTable("bad-table-name", getTable());
+		
+		table.append(toAppend);
+	}
+	
+	@Test(expected=TableSchemaMismatchException.class)
+	public void testAppendThrowsExceptionIfTableSchemaToAppendMismatches() {
+		KdbTable table = new KdbTable("my-test-table", getTable());
+		KdbTable toAppend = new KdbTable("my-test-table", getTable2());
+		
+		table.append(toAppend);
+	}
+	
+	@Test
+	public void testAppendAppendsTableToEndOfTable() {
+		KdbTable table = new KdbTable("my-test-table", getTable());
+		KdbTable toAppend = new KdbTable("my-test-table", getTable());
+		
+		table.append(toAppend);
+		
+		assertThat(table.getRowCount(), is(equalTo(6)));
+	}
+	
+	// KdbTable.getTableName
+	
+	@Test
+	public void testGetTableNameReturnsTableName() {
+		KdbTable table = new KdbTable("my-test-table");
+		assertThat(table.getTableName(), is(equalTo("my-test-table")));
+	}
+	
+	// KdbTable.getTableData
+	
+	@Test
+	public void testGetTableDataReturnsUnderlyingTableData() {
+		KdbTable table = new KdbTable("my-test-table");
+		assertThat(table.getTableData(), is(anEmptyMap()));
+	}
+	
+	// KdbTable.convertToFlip
+	
+	@Test
+	public void testConvertToFlipReturnsNullForEmptyTable() {
+		KdbTable table = new KdbTable("my-test-table");
+		assertThat(table.convertToFlip(), is(nullValue()));
+	}
+	
+	@Test
+	public void testConvertToFlipReturnsFlip() {
+		KdbTable table = new KdbTable("my-test-table", getTable());
+		Flip converted = table.convertToFlip();
+		
+		assertThat(converted.x, is(arrayWithSize(3)));
+		assertThat(converted.x, is(arrayContainingInAnyOrder("key1", "key2", "key3")));
+	}
+	
+	// KdbTable.getRowCount()
+	
+	@Test
+	public void testGetRowCountReturns0ForEmptyTable() {
+		KdbTable table = new KdbTable("my-test-table");
+		assertThat(table.getRowCount(), is(equalTo(0)));
+	}
+	
+	@Test
+	public void testGetRowCountReturnsRowCount() {
+		KdbTable table = new KdbTable("my-test-table", getTable());
+		assertThat(table.getRowCount(), is(equalTo(3)));
+	}
+	
+	// KdbTable.isEmpty
+	
+	@Test
+	public void testIsEmptyReturnsTrueForEmptyTable() {
+		KdbTable table = new KdbTable("my-test-table");
+		assertThat(table.isEmpty(), is(equalTo(false)));
+	}
+	
+	@Test
+	public void testIsEmptyReturnsFalseForNonEmptyTable() {
+		KdbTable table = new KdbTable("my-test-table", getTable());
+		assertThat(table.isEmpty(), is(equalTo(false)));
+	}
+	
+	// KdbTable.changeTableName
+	
+	@Test(expected=UnsupportedOperationException.class)
+	public void testChangeTableNameThrowsExceptionIfNewNameIsNull() {
+		new KdbTable("table-name").changeTableName(null);
+	}
+	
+	@Test
+	public void testChangeTableNameChangesTableName() {
+		KdbTable table = new KdbTable("table-name");
+		table.changeTableName("some-other-table-name");
+		
+		assertThat(table.getTableName(), is(equalTo("some-other-table-name")));
+	}
 	
 	
 	private Flip getTable() {
@@ -164,5 +344,9 @@ public class KdbTableTest {
 		Object[] cols = { col1, col2, col3 };
 		
 		return new Flip(new Dict(keys, cols));
+	}
+	
+	enum TestEnum {
+		VALUE_1;
 	}
 }
