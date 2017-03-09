@@ -13,13 +13,6 @@ public class KdbTargetProcessUnavailableException extends Exception {
 	
 	private static final String message = "This Java process could not connect to the specified kdb process.";
 
-	public KdbTargetProcessUnavailableException() {
-		super(message);
-	}
-
-	public KdbTargetProcessUnavailableException(String arg0) {
-		super(message + " " + arg0);
-	}
 
 	public KdbTargetProcessUnavailableException(Throwable arg0) {
 		super(message, arg0);
@@ -27,10 +20,6 @@ public class KdbTargetProcessUnavailableException extends Exception {
 
 	public KdbTargetProcessUnavailableException(String arg0, Throwable arg1) {
 		super(message + " " + arg0, arg1);
-	}
-
-	public KdbTargetProcessUnavailableException(String arg0, Throwable arg1, boolean arg2, boolean arg3) {
-		super(message + " " + arg0, arg1, arg2, arg3);
 	}
 
 }

@@ -13,23 +13,8 @@ public class KdbProcessSubscriptionFailedException extends Exception {
 	
 	private static final String message = "The subscription to the specified kdb process failed.";
 
-	public KdbProcessSubscriptionFailedException() {
-		super(message);
-	}
 
 	public KdbProcessSubscriptionFailedException(String arg0) {
 		super(message + " " + arg0);
-	}
-
-	public KdbProcessSubscriptionFailedException(Throwable arg0) {
-		super(message, arg0);
-	}
-
-	public KdbProcessSubscriptionFailedException(String arg0, Throwable arg1) {
-		super(message + " " + arg0, arg1);
-	}
-
-	public KdbProcessSubscriptionFailedException(String arg0, Throwable arg1, boolean arg2, boolean arg3) {
-		super(message + " " + arg0, arg1, arg2, arg3);
 	}
 }
