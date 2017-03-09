@@ -320,6 +320,63 @@ public class KdbDictTest {
 		assertThat(dict.toString(), is(equalTo(dict.getDataStore().toString())));
 	}
 	
+	// KdbDict.equals
+	
+	@Test
+	public void testEqualsReturnsFalseIfComparisonObjectIsNull() {
+		KdbDict dict = new KdbDict();
+		assertThat(dict.equals(null), is(equalTo(false)));
+	}
+	
+	@Test
+	public void testEqualsReturnsFalseIfComparisonObjectIsNotKdbDict() {
+		KdbDict dict = new KdbDict();
+		assertThat(dict.equals("string"), is(equalTo(false)));
+	}
+	
+	@Test
+	public void testEqualsReturnsTrueFor2EmptyDicts() {
+		KdbDict emptyDict1 = new KdbDict();
+		KdbDict emptyDict2 = new KdbDict();
+		
+		assertThat(emptyDict1.equals(emptyDict2), is(equalTo(true)));
+	}
+	
+	@Test
+	public void testEqualsReturnsTrueForDictsWithIdenticalEntries() {
+		KdbDict dict1 = new KdbDict()
+								.add("key1", "val1");
+		
+		KdbDict dict2 = new KdbDict()
+								.add("key1", "val1");
+		
+		assertThat(dict1.equals(dict2), is(equalTo(true)));
+	}
+	
+	@Test
+	public void testEqualsReturnsFalseForNonEqualDicts() {
+		KdbDict dict1 = new KdbDict()
+								.add("key1", "val1");
+		
+		KdbDict dictValChange = new KdbDict()
+								.add("key1", "val12");
+		KdbDict dictKeyChange = new KdbDict()
+								.add("key2", "val1");
+		
+		assertThat(dict1.equals(dictKeyChange), is(equalTo(false)));
+		assertThat(dict1.equals(dictValChange), is(equalTo(false)));
+	}
+	
+	// KdbDict.hashCode
+	
+	@Test
+	public void testHashCodeReturnsNonZeroValue() {
+		KdbDict dict1 = new KdbDict()
+								.add("key1", "val1");
+		
+		assertThat(dict1.hashCode(), is(not(equalTo(0))));
+	}
+	
 	// KdbDict.fromObject
 	
 	@Test

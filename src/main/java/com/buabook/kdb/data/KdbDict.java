@@ -207,6 +207,24 @@ public class KdbDict {
 		return data.toString();
 	}
 	
+	/** Delegates equality check to the underlying data store object ({@link #data}) */
+	@Override
+	public boolean equals(Object obj) {
+		if(obj == null)
+			return false;
+		
+		if(! (obj instanceof KdbDict))
+			return false;
+		
+		return data.equals(((KdbDict) obj).data);
+	}
+	
+	/** Delegates hash code calculation to underlying data store object ({@link #data}) */
+	@Override
+	public int hashCode() {
+		return data.hashCode();
+	}
+	
 	/**
 	 * <p>Generates a new {@link KdbDict} object from an object. This method will only succeed if the object provided can be cast into a {@link Dict}.</p>
 	 * <p>Use this method along with {@link KdbQuery} to convert a query result into a dictionary when one is expected.</p> 
