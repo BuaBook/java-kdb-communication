@@ -297,7 +297,7 @@ public class KdbTableTest {
 	@Test
 	public void testIsEmptyReturnsTrueForEmptyTable() {
 		KdbTable table = new KdbTable("my-test-table");
-		assertThat(table.isEmpty(), is(equalTo(false)));
+		assertThat(table.isEmpty(), is(equalTo(true)));
 	}
 	
 	@Test
