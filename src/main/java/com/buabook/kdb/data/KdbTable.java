@@ -289,11 +289,10 @@ public class KdbTable implements Iterable<KdbDict> {
 	 * @return The new table
 	 * @see #addRow(KdbDict)
 	 */
-	public static KdbTable buildFromRowList(String name, List<KdbDict> rows) {
+	public static KdbTable buildFromRowList(String name, List<KdbDict> rows) throws TableSchemaMismatchException {
 		KdbTable table = new KdbTable(name);
 		
-		for(KdbDict row : rows)
-			table.addRow(row);
+		rows.forEach(table::addRow);
 		
 		return table;
 	}

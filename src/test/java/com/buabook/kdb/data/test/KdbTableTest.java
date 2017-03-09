@@ -17,6 +17,7 @@ import com.buabook.kdb.exceptions.DataOverwriteNotPermittedException;
 import com.buabook.kdb.exceptions.TableColumnAlreadyExistsException;
 import com.buabook.kdb.exceptions.TableSchemaMismatchException;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import com.kx.c.Dict;
 import com.kx.c.Flip;
 
@@ -196,9 +197,11 @@ public class KdbTableTest {
 	@Test
 	public void testAddRowMapAddsConvertsListAndEnumTypesCorrectly() {
 		KdbTable table = new KdbTable("my-test-table");
-		KdbDict newRow = new KdbDict()
-									.add("nested-list", ImmutableList.of(1, 2, 3))
-									.add("enum", TestEnum.VALUE_1);
+		
+		Map<String, Object> newRow = ImmutableMap.<String, Object>builder()
+																		.put("nested-list", ImmutableList.of(1, 2, 3))
+																		.put("enum", TestEnum.VALUE_1)
+																		.build();
 		
 		table.addRow(newRow);
 		
@@ -243,6 +246,16 @@ public class KdbTableTest {
 		table.append(toAppend);
 		
 		assertThat(table.getRowCount(), is(equalTo(6)));
+	}
+	
+	@Test
+	public void testAppendAppendsToEmptyTable() {
+		KdbTable empty = new KdbTable("my-test-table");
+		KdbTable toAppend = new KdbTable("my-test-table", getTable());
+		
+		empty.append(toAppend);
+		
+		assertThat(empty.getRowCount(), is(equalTo(3)));
 	}
 	
 	// KdbTable.getTableName
@@ -319,6 +332,69 @@ public class KdbTableTest {
 		table.changeTableName("some-other-table-name");
 		
 		assertThat(table.getTableName(), is(equalTo("some-other-table-name")));
+	}
+	
+	// KdbTable.getRow
+	
+	@Test(expected=ArrayIndexOutOfBoundsException.class)
+	public void testGetRowThrowsExceptionIfRowNumberIsNegative() {
+		new KdbTable("my-table").getRow(-1);
+	}
+	
+	@Test(expected=ArrayIndexOutOfBoundsException.class)
+	public void testGetRowThrowsExceptionIfRowNumberGreaterThanRowCount() {
+		new KdbTable("my-table", getTable()).getRow(10);
+	}
+	
+	// KdbTable.fromObject
+	
+	@Test
+	public void testFromObjectReturnsNullIfNullObject() {
+		KdbTable fromFlip = KdbTable.fromObject(null);
+		
+		assertThat(fromFlip, is(nullValue()));
+	}
+	
+	@Test
+	public void testFromObjectReturnsNewObjectWithFlipData() {
+		KdbTable fromFlip = KdbTable.fromObject(getTable());
+		
+		assertThat(fromFlip.isEmpty(), is(equalTo(false)));
+		assertThat(fromFlip.getRowCount(), is(equalTo(3)));
+		assertThat(fromFlip.getTableName(), is(equalTo("table")));
+	}
+	
+	// KdbTable.iterator
+	
+	@Test
+	public void testIteratorIteratesOverAllRowsOfTable() {
+		KdbTable toIterate = new KdbTable("a-table", getTable());
+		
+		int iterateCount = 0;
+		
+		for(KdbDict row : toIterate) {
+			assertThat(row.getDataStore(), hasKey("key1"));
+			assertThat(row.getDataStore(), hasKey("key2"));
+			assertThat(row.getDataStore(), hasKey("key3"));
+			
+			iterateCount++;
+		}
+			
+		assertThat(iterateCount, is(equalTo(toIterate.getRowCount())));
+	}
+	
+	// KdbTable.stream
+	
+	@Test
+	public void testStreamIteratesOverAllRowsOfTable() {
+		KdbTable toIterate = new KdbTable("a-table", getTable());
+		
+		toIterate.stream()
+						.forEach((row) -> {
+							assertThat(row.getDataStore(), hasKey("key1"));
+							assertThat(row.getDataStore(), hasKey("key2"));
+							assertThat(row.getDataStore(), hasKey("key3"));
+						});
 	}
 	
 	
