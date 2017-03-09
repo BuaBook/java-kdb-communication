@@ -70,36 +70,36 @@ public class KdbTable implements Iterable<KdbDict> {
 	/**
 	 * Instantiates a new kdb table object with a set of initial data in kdb format
 	 * @param tableName The name of the table to create
-	 * @param initalData The initial data set to populate the new object with
+	 * @param initialData The initial data set to populate the new object with
 	 * @throws IllegalArgumentException If the table name is empty or null
 	 * @see #setInitialDataSet(Flip)
 	 */
-	public KdbTable(String tableName, Flip initalData) throws DataOverwriteNotPermittedException {
+	public KdbTable(String tableName, Flip initialData) throws DataOverwriteNotPermittedException {
 		this(tableName);
 
-		setInitialDataSet(initalData);
+		setInitialDataSet(initialData);
 	}
 	
 	/**
 	 * Performs the initial set of data from a kdb {@link Flip} object
-	 * @param initalData The dataset to use to set the object
+	 * @param initialData The dataset to use to set the object
 	 * @throws DataOverwriteNotPermittedException If there is already data in the current data structure
 	 * @see #doSetOfInitialDataSet(Flip, boolean)
 	 */
-	public void setInitialDataSet(Flip initalData) throws DataOverwriteNotPermittedException {
-		doSetOfInitialDataSet(initalData, false);
+	public void setInitialDataSet(Flip initialData) throws DataOverwriteNotPermittedException {
+		doSetOfInitialDataSet(initialData, false);
 	}
 	
 	/**
 	 * Performs the initial (or subsequent) set of data from a kdb {@link Flip} object
-	 * @param initalData The dataset to use to set the object
+	 * @param initialData The dataset to use to set the object
 	 * @see #doSetOfInitialDataSet(Flip, boolean)
 	 */
-	public void forceSetInitialDataSet(Flip initalData) {
-		doSetOfInitialDataSet(initalData, true);
+	public void forceSetInitialDataSet(Flip initialData) {
+		doSetOfInitialDataSet(initialData, true);
 	}
 	
-	private void doSetOfInitialDataSet(Flip initalData, boolean overwrite) throws DataOverwriteNotPermittedException {
+	private void doSetOfInitialDataSet(Flip initialData, boolean overwrite) throws DataOverwriteNotPermittedException {
 		if(! isEmpty()) {
 			if(! overwrite) {
 				log.error("Data already exists and overwrite not set [ Table: {} ]", tableName);
@@ -109,15 +109,15 @@ public class KdbTable implements Iterable<KdbDict> {
 		
 		data.clear();
 		
-		for(int cCount = 0; cCount < initalData.x.length; cCount++) {
-			String colName = initalData.x[cCount];
-			Object[] colData = Converters.arrayToObjectArray(initalData.y[cCount]);
+		for(int cCount = 0; cCount < initialData.x.length; cCount++) {
+			String colName = initialData.x[cCount];
+			Object[] colData = Converters.arrayToObjectArray(initialData.y[cCount]);
 			List<Object> objArray = new ArrayList<>(Arrays.asList(colData));
 			
 			data.put(colName, objArray);
 		}
 		
-		this.rowCount = Converters.arrayToObjectArray(initalData.y[0]).length;
+		this.rowCount = Converters.arrayToObjectArray(initialData.y[0]).length;
 	}
 	
 	/**
