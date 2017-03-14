@@ -153,7 +153,8 @@ public class KdbTable implements Iterable<KdbDict> {
 	}
 	
 	/**
-	 * Adds a row to a table based on an {@link HashMap} representation of the row (i.e. a kdb dictionary)
+	 * Adds a row to a table based on an {@link HashMap} representation of the row (i.e. a kdb dictionary). Any list
+	 * values are converted to arrays and any enumeration values are converted to strings.
 	 * @param row The new row to add
 	 * @throws TableSchemaMismatchException If there are any missing columns from the new row
 	 */
@@ -165,18 +166,18 @@ public class KdbTable implements Iterable<KdbDict> {
 			if(! row.keySet().containsAll(data.keySet()))
 				throw new TableSchemaMismatchException("Missing columns in row to add");
 		
-		for(String key : row.keySet()) {
-			if(! data.containsKey(key))
-				data.put(key, new ArrayList<Object>());
+		for(Entry<String, Object> entry : row.entrySet()) {
+			if(! data.containsKey(entry.getKey()))
+				data.put(entry.getKey(), new ArrayList<Object>());
 			
-			Object rowValue = row.get(key);
+			Object rowValue = entry.getValue();
 			
 			if(rowValue instanceof List<?>)
 				rowValue = ((List<?>) rowValue).toArray();
 			else if(rowValue instanceof Enum)
 				rowValue = ((Enum<?>) rowValue).toString();
 			
-			data.get(key).add(rowValue);
+			data.get(entry.getKey()).add(rowValue);
 		}
 		
 		this.rowCount++;
