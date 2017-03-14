@@ -15,7 +15,7 @@ import java.util.Iterator;
  */
 class KdbTableIterator implements Iterator<KdbDict> {
 	
-	private Integer rowCounter;
+	private int rowCounter;
 	
 	private final KdbTable table; 
 

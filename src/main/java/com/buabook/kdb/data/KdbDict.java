@@ -190,7 +190,7 @@ public class KdbDict {
 		return new PrintableDict(keys, values);
 	}
 	
-	public Boolean isEmpty() {
+	public boolean isEmpty() {
 		return data.isEmpty();
 	}
 	
@@ -198,7 +198,7 @@ public class KdbDict {
 	 * @return <code>true</code> if the dictionary contains the specified key, <code>false</code> otherwise
 	 * @see HashMap#containsKey(Object)
 	 */
-	public Boolean has(Object key) {
+	public boolean has(Object key) {
 		return data.containsKey(key);
 	}
 	

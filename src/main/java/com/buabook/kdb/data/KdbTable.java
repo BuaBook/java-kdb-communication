@@ -50,7 +50,7 @@ public class KdbTable implements Iterable<KdbDict> {
 	/** The container of the kdb data stored column-wise */
 	private final Map<String, List<Object>> data;
 	
-	private Integer rowCount;
+	private int rowCount;
 
 	
 	/**
@@ -240,11 +240,11 @@ public class KdbTable implements Iterable<KdbDict> {
 		return new Flip(new Dict(colNames, cols));
 	}
 	
-	public Integer getRowCount() {
+	public int getRowCount() {
 		return rowCount;
 	}
 	
-	public Boolean isEmpty() {
+	public boolean isEmpty() {
 		return rowCount == 0 || data.isEmpty();
 	}
 	
@@ -299,10 +299,8 @@ public class KdbTable implements Iterable<KdbDict> {
 	}
 	
 	/**
-	 * <p>Generates a new {@link KdbTable} object from an object. This method will
-	 * only succeed if the object provided can be cast into a {@link Flip}.</p>
-	 * <p>Use this method along with {@link KdbQuery} to convert a query result
-	 * into a table when one is expected.</p> 
+	 * <p>Generates a new {@link KdbTable} object from an object. This method will only succeed if the object provided can be cast into a {@link Flip}.</p>
+	 * <p>Use this method along with {@link KdbQuery} to convert a query result into a table when one is expected.</p> 
 	 * @param object The object to generate a new {@link KdbTable} from
 	 * @return A new table or <code>null</code> if the provided object is null
 	 * @throws ClassCastException If the specified object cannot be cast into a {@link Flip}
