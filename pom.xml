@@ -89,6 +89,10 @@
 					<show>private</show>
 					<author>true</author>
 					<nohelp>true</nohelp>
+					
+					<links>
+						<link>https://buabook.github.io/javadoc/buabook-common/</link>
+					</links>
 				</configuration>
 				<executions>
 					<execution>

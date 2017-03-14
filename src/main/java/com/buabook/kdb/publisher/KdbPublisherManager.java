@@ -38,7 +38,7 @@ public class KdbPublisherManager {
 	
 	public void addPublisher(KdbProcess server) throws KdbTargetProcessUnavailableException, KdbPublisherAlreadyExistsException {
 		if(publishers.containsKey(server)) {
-			log.error("This manager already contains a publisher to this KDB process! [ Process: " + server.toString() + " ]");
+			log.error("This manager already contains a publisher to this KDB process! [ Process: {} ]", server);
 			throw new KdbPublisherAlreadyExistsException(server.toString());
 		}
 		
@@ -80,11 +80,11 @@ public class KdbPublisherManager {
 	 */
 	public void disconnect(KdbProcess server) throws KdbPublisherDoesNotExistException {
 		if(! publishers.containsKey(server)) {
-			log.error("The specified KDB process does not exist within this manager [ Process: " + server.toString() + " ]");
+			log.error("The specified KDB process does not exist within this manager [ Process: {} ]", server);
 			throw new KdbPublisherDoesNotExistException(server.toString());
 		}
 		
-		log.info("Disconnect request received for server: " + server.toString());
+		log.info("Disconnect request received for server: {}", server);
 		
 		publishers.get(server).disconnect();
 		publishers.remove(server);
