@@ -29,8 +29,4 @@ public class QueryExecutionFailedException extends Exception {
 		super(message + " " + msg, cause);
 	}
 
-	public QueryExecutionFailedException(String msg, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-		super(message + " " + msg, cause, enableSuppression, writableStackTrace);
-	}
-
 }

@@ -383,6 +383,14 @@ public class KdbTableTest {
 		assertThat(iterateCount, is(equalTo(toIterate.getRowCount())));
 	}
 	
+	@Test
+	public void testIteratorRemoveDoesNothing() {
+		KdbTable toIterate = new KdbTable("a-table", getTable());
+		toIterate.iterator().remove();
+
+		assertThat(toIterate.getRowCount(), is(equalTo(3)));
+	}
+	
 	// KdbTable.stream
 	
 	@Test
