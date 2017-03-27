@@ -7,6 +7,7 @@ import java.net.*;import javax.net.ssl.*;import java.io.*;import java.sql.*;impo
  java -Djavax.net.ssl.trustStore=./keystore -Djavax.net.ssl.keystore=./keystore kx.c
  To debug ssl, supply -Djavax.net.debug=ssl on cmd line
 */
+@SuppressWarnings("all")
 public class c{
 private static String e="UTF-8";private static PrintStream out=System.out;private int sync=0;
 public static void setEncoding(String e)throws UnsupportedEncodingException{c.e=e;out=new PrintStream(System.out,true,e);}
