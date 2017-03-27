@@ -80,12 +80,11 @@ public class KdbProcess extends Process {
 		if(! (obj instanceof KdbProcess))
 			return false;
 
-		boolean superEquals = super.equals(obj);
 		KdbProcess kObj = (KdbProcess) obj;
 		
-		return superEquals &&
-					((this.username == null) ? kObj.username == null : this.username.equals(kObj.username)) &&
-					((this.password == null) ? kObj.password == null : this.password.equals(kObj.password));
+		return super.equals(obj) &&
+				((this.username == null) ? kObj.username == null : this.username.equals(kObj.username)) &&
+				((this.password == null) ? kObj.password == null : this.password.equals(kObj.password));
 	}
 	
 	@Override
