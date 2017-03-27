@@ -20,7 +20,7 @@ public final class Dicts {
 	
 	/** @return <code>true</code> if the specified dictionary is <code>null</code> or has no data in it; <code>false</code> otherwise */
 	public static boolean isNullOrEmpty(Dict dict) {
-		return dict == null || getSize(dict) == 0;
+		return getSize(dict) == 0;
 	}
 
 	/** @return The number of elements within the specified dictionary */
