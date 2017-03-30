@@ -4,7 +4,7 @@
 	<groupId>com.buabook</groupId>
 	<artifactId>java-kdb-communication</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.0</version>
+	<version>1.0.1</version>
 
 	<name>Java &lt;-&gt; kdb Communication Library</name>
 	<description>Java library to publish data into and query data out of kdb+ processes (c) 2017 Sport Trades Ltd</description>
@@ -12,7 +12,7 @@
 	<url>http://buabook.github.io</url>
 	<licenses>
 		<license>
-    		<name>GPLv3</name>
+    		<name>Apache-2.0</name>
     		<url>https://raw.githubusercontent.com/BuaBook/java-kdb-communication/master/LICENSE</url>
   		</license>
 	</licenses>
