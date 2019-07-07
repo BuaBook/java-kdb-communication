@@ -26,10 +26,10 @@ import com.kx.c.KException;
  * <h3>KDB Data Consumer</h3>
  * <p>Provides the ability to consume real-time streaming data from a KDB process
  * into a {@link KdbTable} for use within a Java application</p>
- * (c) 2014 - 2015 Sport Trades Ltd
+ * (c) 2014 - 2019 Sport Trades Ltd
  *
  * @author Jas Rajasansir
- * @version 1.1.0
+ * @version 1.2.0
  * @since 23 Apr 2014
  */
 public class KdbConsumer extends KdbConnection {
@@ -62,6 +62,9 @@ public class KdbConsumer extends KdbConnection {
 	private KdbConsumer(KdbProcess server, List<String> tables, KdbDict subscriptionConfiguration, IKdbRawDataConsumer rawDataConsumer, IKdbTableConsumer tableConsumer) throws KdbTargetProcessUnavailableException {
 		super(server);
 		
+		if(tables == null && subscriptionConfiguration == null)
+			throw new NullPointerException("Must provide at least one subscription method - list of tables or dictionary");
+		
 		if(rawDataConsumer == null && tableConsumer == null)
 			throw new NullPointerException("Must provied either a raw data or KdbTable consuming object, or both to this object");
 		
@@ -74,15 +77,16 @@ public class KdbConsumer extends KdbConnection {
 		log.info("Connected to kdb process [ Target: " + server.toString() + " ]");
 	}
 
+	
 	/**
-	 * Generates a new kdb consumer (which is generally a consumer from a kdb TickerPlant)
+	 * Generates a new kdb consumer (which is generally a consumer from a kdb TickerPlant). By specifying a list of tables, the subscription API
+	 * is assumed to be <code>.u.sub[tables; syms]</code> where <code>syms</code> is hardcoded to null symbol
 	 * @param server The kdb process to connect to
 	 * @param tables The list of tables that should be subscribed to. <b>NOTE</b>: This cannot be null, pass an empty list
 	 * @param rawDataConsumer A listener object that will consume every message from the kdb process
 	 * @param tableConsumer A listener object that will consume only table messages from the kdb process
 	 * @throws KdbTargetProcessUnavailableException If the consumer cannot connect to the target kdb process
-	 * @throws NullPointerException If either <code>tables</code> or <code>syms</code> is null. Also if both <code>rawDataConsumer</code>
-	 * and <code>tableConsumer</code> null, the constructor must be passed one or the other
+	 * @throws NullPointerException If <code>tables</code> is null or if both <code>rawDataConsumer</code> and <code>tableConsumer</code> are null
 	 */
 	protected KdbConsumer(KdbProcess server, List<String> tables, IKdbRawDataConsumer rawDataConsumer, IKdbTableConsumer tableConsumer) throws KdbTargetProcessUnavailableException {
 		this(server, tables, null, rawDataConsumer, tableConsumer);
@@ -91,6 +95,17 @@ public class KdbConsumer extends KdbConnection {
 			throw new NullPointerException("Tables for a consumer cannot be null. Provide an empty list for ALL tables.");
 	}
 	
+	/**
+	 * Generates a new kdb consumer (which is generally a consumer from a kdb TickerPlant). By specifying a dictionary subscription configuration
+	 * the subscription API is assumed to be <code>.u.sub[subDict]</code>.
+	 * @param server The kdb process to connect to
+	 * @param subscriptionConfiguration The dictionary configuration for the subscription 
+	 * @param rawDataConsumer A listener object that will consume every message from the kdb process
+	 * @param tableConsumer A listener object that will consume only table messages from the kdb process
+	 * @throws KdbTargetProcessUnavailableException If the consumer cannot connect to the target kdb process
+	 * @throws NullPointerException If dictionary configuration object is null or empty or if both <code>rawDataConsumer</code> and 
+	 * <code>tableConsumer</code> are null
+	 */
 	protected KdbConsumer(KdbProcess server, KdbDict subscriptionConfiguration, IKdbRawDataConsumer rawDataConsumer, IKdbTableConsumer tableConsumer) throws KdbTargetProcessUnavailableException {
 		this(server, null, subscriptionConfiguration, rawDataConsumer, tableConsumer);
 		
@@ -98,9 +113,21 @@ public class KdbConsumer extends KdbConnection {
 			throw new NullPointerException("No subscription configuration supplied. Cannot subscribe to process");
 	}
 	
-	/** @see #KdbConsumer(KdbProcess, List, IKdbRawDataConsumer, IKdbTableConsumer) */
+	
+	/** 
+	 * Table list-based kdb consumer with only a table ({@link IKdbTableConsumer}) interface specified
+	 * @see #KdbConsumer(KdbProcess, List, IKdbRawDataConsumer, IKdbTableConsumer) 
+	 */
 	public KdbConsumer(KdbProcess server, List<String> tables, IKdbTableConsumer tableConsumer) throws KdbTargetProcessUnavailableException {
 		this(server, tables, null, tableConsumer);
+	}
+	
+	/**
+	 * Dict-based kdb consumer with only a table ({@link IKdbTableConsumer}) interface specified
+	 * @see #KdbConsumer(KdbProcess, KdbDict, IKdbRawDataConsumer, IKdbTableConsumer) 
+	 */
+	public KdbConsumer(KdbProcess server, KdbDict subscriptionConfiguration, IKdbTableConsumer tableConsumer) throws KdbTargetProcessUnavailableException {
+		this(server, subscriptionConfiguration, null, tableConsumer);
 	}
 	
 	
@@ -153,31 +180,34 @@ public class KdbConsumer extends KdbConnection {
 	 * @return <code>True</code> if the subscription result from the kdb process is not null, <code>false</code> otherwise 
 	 */
 	private Boolean subscribe() throws UnsupportedOperationException {
-		Object subscribeObject = null;
-		
-		if(subscriptionTables != null) {
-			if(subscriptionTables.isEmpty())
-				subscribeObject = "";
-			else
-				subscribeObject = subscriptionTables.toArray();
-			
-			log.info("Attempting to subscribe to kdb process [ Process: {} ] [ Standard Table Subscription: {} ]", getRemoteProcess(), Printers.listToString(subscriptionTables));
-		} else if(subscriptionConfiguration != null) {
-			subscribeObject = subscriptionConfiguration.convertToDict();
-			
-			log.info("Attempting to subscribe to kdb process [ Process: {} ] [ Dict Config Subscription: {} ]", getRemoteProcess(), subscriptionConfiguration);
-		} else {
-			log.error("No subscription configuration or subscription tables specified. Cannot subscribe to process!");
-			throw new UnsupportedOperationException("No subscription configuration or subscription tables");
-		}
-		
 		Object subscribeResult = null;
 		
-		try {
-			subscribeResult = getConnection().k(SUB_FUNCTION, subscribeObject);
-		} catch (KException | IOException e) {
-			log.error("Subscription to kdb process failed [ Process: {} ]. Error - {}", getRemoteProcess(), e.getMessage());
-			return false;
+		if(subscriptionTables != null) {
+			// Assume subscription API is '.u.sub[tables; syms]' where syms is always a null symbol
+			Object tableSub = "";
+			
+			if(! subscriptionTables.isEmpty())
+				tableSub = subscriptionTables.toArray();
+					
+			log.info("Attempting to subscribe to kdb process [ Process: {} ] [ Standard Table Subscription: {} ]", getRemoteProcess(), Printers.listToString(subscriptionTables));
+			
+			try {
+				subscribeResult = getConnection().k(SUB_FUNCTION, tableSub, "");
+			} catch (KException | IOException e) {
+				log.error("Subscription to kdb process failed [ Process: {} ]. Error - {}", getRemoteProcess(), e.getMessage());
+				return false;
+			}
+			
+		} else if(subscriptionConfiguration != null) {
+			// Assume subscription API is '.u.sub[subDict]' where subDict is a dictionary
+			log.info("Attempting to subscribe to kdb process [ Process: {} ] [ Dict Config Subscription: {} ]", getRemoteProcess(), subscriptionConfiguration);
+			
+			try {
+				subscribeResult = getConnection().k(SUB_FUNCTION, subscriptionConfiguration.convertToDict());
+			} catch (KException | IOException e) {
+				log.error("Subscription to kdb process failed [ Process: {} ]. Error - {}", getRemoteProcess(), e.getMessage());
+				return false;
+			}
 		}
 		
 		if(subscribeResult instanceof Dict) {
@@ -193,7 +223,7 @@ public class KdbConsumer extends KdbConnection {
 				}
 		}
 		
-		return subscribeResult != null;
+		return ( subscribeResult instanceof Boolean ) || ( subscribeResult instanceof Dict );
 	}
 	
 	/**

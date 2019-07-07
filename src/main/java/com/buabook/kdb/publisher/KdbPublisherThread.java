@@ -61,7 +61,6 @@ public class KdbPublisherThread extends Thread {
 		this(server, threadSleepMs, null);
 	}
 
-	@SuppressWarnings("resource")
 	public KdbPublisherThread(KdbProcess server, Long threadSleepMs, Duration resetConnectionDuration) throws KdbTargetProcessUnavailableException {
 		this(new KdbPublisher(server, resetConnectionDuration), threadSleepMs);
 	}
