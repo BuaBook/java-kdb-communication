@@ -4,7 +4,7 @@
 	<groupId>com.buabook</groupId>
 	<artifactId>java-kdb-communication</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0.1</version>
+	<version>1.1.0</version>
 
 	<name>Java &lt;-&gt; kdb Communication Library</name>
 	<description>Java library to publish data into and query data out of kdb+ processes (c) 2017 Sport Trades Ltd</description>
